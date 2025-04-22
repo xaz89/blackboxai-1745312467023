@@ -1,0 +1,121 @@
+@model IEnumerable<DiadiaApp.Models.Challenge>
+
+@{
+    ViewData["Title"] = "Diadia - Puntos y Retos";
+}
+
+<!-- Points Display -->
+<div class="gradient-purple text-white">
+    <div class="container">
+        <div class="px-4 py-4">
+            <p class="small-points mb-1">Puntos disponibles para canjear:</p>
+            <div class="d-flex align-items-baseline">
+                <span class="points-text me-2">@ViewBag.AvailablePoints</span>
+                <span class="small-points">puntos</span>
+                <i class="fas fa-star ms-2 text-warning"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Challenge Navigation -->
+<div class="container py-4">
+    <h2 class="h5 fw-bold mb-1">Lista de retos</h2>
+    <p class="text-muted small mb-4">Acepta los retos y gana más puntos</p>
+    
+    <!-- Tabs -->
+    <ul class="nav nav-pills mb-4" id="challengeTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#todo" type="button">Todo</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#nuevas" type="button">Nuevas</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#en-curso" type="button">En curso</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="pill" data-bs-target="#completadas" type="button">Completadas</button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+        <!-- Todo Tab -->
+        <div class="tab-pane fade show active" id="todo">
+            <div class="row g-4 card-grid">
+                @foreach (var challenge in Model)
+                {
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="card h-100">
+                            @if (!challenge.IsIconCard)
+                            {
+                                <div class="position-relative">
+                                    <img src="@challenge.ImageUrl" class="card-img-top" alt="@challenge.Title">
+                                    @if (challenge.HasX2Badge)
+                                    {
+                                        <span class="x2-badge position-absolute top-3 end-3">x2</span>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="icon-container">
+                                    <div class="text-center">
+                                        @if (!string.IsNullOrEmpty(challenge.IconClass))
+                                        {
+                                            <i class="fas @challenge.IconClass text-primary mb-2 fa-3x"></i>
+                                        }
+                                        <div class="h4 text-purple mb-0">@challenge.IconTitle</div>
+                                        <div class="small text-purple">puntos</div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title mb-2">@challenge.Title</h5>
+                                <p class="expiry-text mb-2">@challenge.ExpiryText</p>
+                                @if (challenge.Progress.HasValue && challenge.Total.HasValue)
+                                {
+                                    <div class="progress mb-2">
+                                        <div class="progress-bar" style="width: @(challenge.Progress * 100 / challenge.Total)%"></div>
+                                    </div>
+                                    <p class="progress-text mb-4">@challenge.Progress/@challenge.Total completado</p>
+                                }
+                                <div class="mt-auto d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-star text-warning me-2"></i>
+                                        <span class="points-badge">
+                                            @(challenge.HasX2Badge ? "x2" : challenge.Points.ToString()) puntos
+                                        </span>
+                                    </div>
+                                    <button class="btn btn-purple">Iniciar reto</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Nuevas Tab -->
+        <div class="tab-pane fade" id="nuevas">
+            <div class="text-center py-5 text-muted">
+                No hay retos nuevos disponibles
+            </div>
+        </div>
+
+        <!-- En Curso Tab -->
+        <div class="tab-pane fade" id="en-curso">
+            <div class="text-center py-5 text-muted">
+                No tienes retos en curso
+            </div>
+        </div>
+
+        <!-- Completadas Tab -->
+        <div class="tab-pane fade" id="completadas">
+            <div class="text-center py-5 text-muted">
+                No hay retos completados
+            </div>
+        </div>
+    </div>
+</div>
